@@ -1,7 +1,7 @@
 # How-To-Secure-Your-SSH-Login-With-Keys
 Using RSA keys is a more secure way to protect a server that you remotely access via SSH.
 Visual Host Keys
-===
+---
 You can set up your ssh to draw a "randomart image" every time you ssh into a computer.
 The randomart is unique for each computer you log in to.
 This ascii art performs the function of a hash: because it is unique, and because it is immediately more 
@@ -49,7 +49,7 @@ ECDSA key fingerprint is SHA256:enY+IENW64ubZW7EzQWIYpNNY1xmiFM/D5Dip/t3Y1w.
 ```
 
 Generating RSA Keys
-===
+---
 Keys are more secure than passwords. They are longer, more random, impossible to guess, and significantly more 
 difficult to brute force.
 
