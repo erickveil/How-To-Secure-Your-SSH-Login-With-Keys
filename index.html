@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>How To Secure Your SSH Login With Keys by erickveil</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>How To Secure Your SSH Login With Keys</h1>
+          <h2>Using RSA keys is a more secure way to protect a server that you remotely access via SSH.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/erickveil/How-To-Secure-Your-SSH-Login-With-Keys/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/erickveil/How-To-Secure-Your-SSH-Login-With-Keys/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/erickveil/How-To-Secure-Your-SSH-Login-With-Keys" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="how-to-secure-your-ssh-login-with-keys" class="anchor" href="#how-to-secure-your-ssh-login-with-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How-To-Secure-Your-SSH-Login-With-Keys</h1>
+
+<p>Using RSA keys is a more secure way to protect a server that you remotely access via SSH.</p>
+
+<h2>
+<a id="visual-host-keys" class="anchor" href="#visual-host-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Visual Host Keys</h2>
+
+<p>You can set up your ssh to draw a "randomart image" every time you ssh into a computer.
+The randomart is unique for each computer you log in to.
+This ascii art performs the function of a hash: because it is unique, and because it is immediately more 
+recognizable to a human than a string of characters would be, a user can immediately tell that the computer 
+that is being logged on to is the correct computer.
+We humans recognize images-- even random ascii images-- far more easily than we remember character strings.</p>
+
+<p>You can add the option to your log in:
+<code>ssh -o VisualHostKey=yes eveil@192.168.58.197</code></p>
+
+<p>Or, even better, you can add it to your <code>.ssh/config</code> file so that you see the randomart every time you log in.
+If <code>~/.ssh/config</code> does not exist on your system, you can add it with vim (or your favorite text editor).</p>
+
+<p>The line that needs to be in the file is:
+<code>VisualHostKey=yes</code></p>
+
+<p>Some example randomart:</p>
+
+<pre><code>Host key fingerprint is SHA256:ebUiTwA1htZ0Rmj4bE5nJLaINuv+zyWe8oj2dLVcCNY
++---[ECDSA 256]---+
+|      .*=o+      |
+|      +o*=.      |
+|     o *++E .    |
+|    + ..*+oo .   |
+|   . o +So* o    |
+|    .   .B +     |
+|   .  . o =      |
+|    oo.= +       |
+|   ooo++*        |
++----[SHA256]-----+
+</code></pre>
+
+<pre><code>ECDSA key fingerprint is SHA256:enY+IENW64ubZW7EzQWIYpNNY1xmiFM/D5Dip/t3Y1w.
++---[ECDSA 256]---+
+|     B*=+.       |
+|    O.**o .      |
+|   o = .+. .     |
+|    . + .+  .    |
+|     = oSo..     |
+|    . o.= o E    |
+|     ..==+..     |
+|    . .B+o*      |
+|     .++.o.o     |
++----[SHA256]-----+
+</code></pre>
+
+<h2>
+<a id="generating-rsa-keys" class="anchor" href="#generating-rsa-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Generating RSA Keys</h2>
+
+<p>Keys are more secure than passwords. They are longer, more random, impossible to guess, and significantly more 
+difficult to brute force.</p>
+
+<p>On the client:
+<code>ssh-keygen -t rsa -b 4096</code></p>
+
+<p>RSA is the <a href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29">cryptosystem</a>.</p>
+
+<p>4096 tells ssh-keygen that you want to make a 4096 bit key, which is even harder to crack than the default 
+2048.</p>
+
+<p>Answer the questions. The default answers are in parentheses, you can just press <code>ENTER</code> to accept the default. 
+I recommend you choose a good password for your keys.</p>
+
+<p>Next copy the key to the server:
+<code>ssh-copy-id &lt;username&gt;@&lt;host&gt;</code></p>
+
+<p>Or, if you need to specify a port, you need to add quotes, due to a bug:
+<code>ssh-copy-id "&lt;username&gt;@&lt;host&gt; -p &lt;port&gt;"</code>
+Another 
+way is to use <code>scp</code> to copy the key over (<code>id_rsa.pub</code> is the key that we are sending the server) and 
+cat it onto the <code>~/.ssh/authorized_keys</code> after backing up:
+<code>cat id_rsa.pub &gt;&gt; authorized_keys</code></p>
+
+<p>Try using ssh to log on and make sure it worked.
+You will need to use the key's password now, instead of the user login password.
+If you know the user password, but forget (gasp!) your key's password, you can still just press enter for the 
+user password prompt to get in instead.
+Unless, that is, you've disabled password logins. Which is what you would do. Because that's the whole point.</p>
+
+<p>Once you've created your keys on your client, you can send the public key to any machine you log in on for easy 
+key logins.</p>
+
+<p>Finally, to turn off password authenification, sudo or root edit <code>/etc/ssh/sshd_config</code></p>
+
+<p>And change the <code>PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code></p>
+
+<p>Restart sshd to make your config changes take effect.
+<code>sudo systemctl restart sshd.service</code></p>
+
+<p>And that's it. You now have a secure server for shelling in to with keys only.</p>
+        </section>
+
+        <footer>
+          How To Secure Your SSH Login With Keys is maintained by <a href="https://github.com/erickveil">erickveil</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
