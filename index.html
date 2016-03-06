@@ -32,7 +32,7 @@
 
         <section id="main_content">
           <h1>
-<a id="how-to-secure-your-ssh-login-with-keys" class="anchor" href="#how-to-secure-your-ssh-login-with-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How-To-Secure-Your-SSH-Login-With-Keys</h1>
+<a id="how-to-secure-your-ssh-login-with-keys" class="anchor" href="#how-to-secure-your-ssh-login-with-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How To Secure Your SSH Login With Keys</h1>
 
 <p>Using RSA keys is a more secure way to protect a server that you remotely access via SSH.</p>
 
@@ -129,6 +129,34 @@ key logins.</p>
 <code>sudo systemctl restart sshd.service</code></p>
 
 <p>And that's it. You now have a secure server for shelling in to with keys only.</p>
+
+<h2>
+<a id="managing-multiple-keys" class="anchor" href="#managing-multiple-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Managing Multiple Keys</h2>
+
+<p>Some keys I use just so I can be lazy, and not have to enter a password. Like pushing to GitHub, or on the local network at work, where I shell around on test machines all day. But I also want a key with a strong password, which protects access to my home server. Having a strong password on that key means that if my mobile tablet is compromised, the rest of my personal network is not.</p>
+
+<p>The solution is to create a second key. During the question/answer part of creation, give the new key a different path and/or name.</p>
+
+<p>There are two ways you can specify which key you want to use. One is on the command line as you shell in:</p>
+
+<pre><code>ssh -i &lt;key location&gt; user@server.com
+</code></pre>
+
+<p>The second, and better way is to add your frequently targeted machines to your local client's config file in <code>~/.ssh/config</code>. This also helps you keep straight which key is for which machine, so you don't have to think about it:
+In the config file, enter:</p>
+
+<pre><code>Host           friendly-name
+HostName       long.and.cumbersome.server.name
+IdentityFile   ~/.ssh/private_ssh_file
+User           username-on-remote-machine
+</code></pre>
+
+<p>Now you can access that machine with the simple alias that you set up:</p>
+
+<pre><code>ssh friendly-name
+</code></pre>
+
+<p>You can have as many machines in your config as you want!</p>
         </section>
 
         <footer>
